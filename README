@@ -1,0 +1,17 @@
+modprobe rfcomm
+hciconfig hci0 up
+hciconfig hci0 noauth
+mknod /dev/rfcomm0 c 216 0
+chmod 666 /dev/rfcomm0
+
+rfcomm bind /dev/rfcomm0 BB:BB:BB:BB:BB:BB 1
+
+
+cat /var/lib/bluetooth/AA:AA:AA:AA:AA:AA/pincodes 
+BB:BB:BB:BB:BB:BB 1234
+
+rfcomm connect /dev/rfcomm0  AA:AA:AA:AA:AA:AA 1
+
+cat /dev/rfcomm0
+
+
