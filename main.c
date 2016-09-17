@@ -178,6 +178,11 @@ int main(void)
 	if(write_cmd(fd))
 		return -1;
 
+	sleep(1);
+
+	if(write_cmd(fd))
+		return -1;
+
 	while(1) {
 		if(read(fd,buff,1)!=1)	break;
 
