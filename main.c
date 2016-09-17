@@ -82,8 +82,11 @@ int serial_proc(unsigned char * buff)
         int enc_filte;
 */
 
-	printf("bat_v %d , bal_a %d , bal_p %d , bal_d %d , vel_p %d , vel_i %d , enc_f %d \r\n",
-		env_p->env.bat_voltage, env_p->env.bal_angle, env_p->env.bal_kp, env_p->env.bal_kd, env_p->env.vel_kp, env_p->env.vel_ki, env_p->env.enc_filte);
+	printf("bat_v %-4d bal_a %-4d bal_p %-4d bal_d %-4d vel_p %-4d vel_i %-4d enc_f %-4d mpu_c %-6d mbal_a %-6d mbal_g %-6d mbal_t %-6d enc_l %-3d enc_r %-3d mot_l %-6d mot_r %-6d\r\n",
+		env_p->env.bat_voltage, env_p->env.bal_angle, env_p->env.bal_kp, env_p->env.bal_kd, env_p->env.vel_kp, env_p->env.vel_ki, env_p->env.enc_filte, 
+		env_p->env.mpu_count,env_p->env.mpu_bal_angle,env_p->env.mpu_bal_gypo,env_p->env.mpu_turn_gypo,
+		env_p->env.enc_left,env_p->env.enc_right,env_p->env.moto_left,env_p->env.moto_right
+	);
 	fflush(stdout);
 
 	serial_buff_reset();
