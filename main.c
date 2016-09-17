@@ -6,8 +6,13 @@
 #include <errno.h>
 #include <termios.h> /* POSIX terminal control definitions */
 
-
 #include "main.h"
+
+#define BUFSIZE	256
+
+
+struct serial_buff_t  serial_buff;
+struct serial_buff_t* serial_buff_p = &serial_buff;
 
 int open_port(void)
 {
@@ -46,26 +51,68 @@ int open_port(void)
 	return fd;
 }
 
-#define BUFSIZE	256
+int serial_buff_reset(void)
+{
+	memset(serial_buff_p, 0, sizeof(struct serial_buff_t));
+	serial_buff_p->index = ENVLEN-1;
+}
+
+int serial_proc(unsigned char * buff)
+{
+	struct env_buff_t *env_p = (struct env_buff_t *)buff;
+
+	if(env_p->head != 0xff || env_p->len != ENVLEN || (env_p->alen & env_p->len))
+		return -1;
+
+	unsigned short sum = 0;
+	for(int i = 0; i < ENVLEN - 2; i++)
+		sum += buff[i];
+	if(env_p->sum != sum){
+		printf("env_proc check sum error !!!\r\n");
+		return -1;
+	}
+
+/*
+        int bat_voltage;
+        int bal_angle;
+        int bal_kp;
+        int bal_kd;
+        int vel_kp;
+        int vel_ki;
+        int enc_filte;
+*/
+
+	printf("bat_v %d , bal_a %d , bal_p %d , bal_d %d , vel_p %d , vel_i %d , enc_f %d \r\n",
+		env_p->env.bat_voltage, env_p->env.bal_angle, env_p->env.bal_kp, env_p->env.bal_kd, env_p->env.vel_kp, env_p->env.vel_ki, env_p->env.enc_filte);
+	fflush(stdout);
+
+	serial_buff_reset();
+
+	return 0;
+}
 
 int main(void)
 {
 	int fd = 0;
-	unsigned char buff[BUFSIZE] = {0};
-	int  n = 0;
+	unsigned char buff[1] = {0};
+
+	serial_buff_reset();
 
 	fd = open_port();
 	if(fd < 0)
 		return -1;
 
 	while(1) {
-		//n = read(fd,buff,BUFSIZE);
-		//for(int i=0; i<n; i++)
-		//	printf("%.2X ", buff[i]);
-		n=read(fd,buff,1);
-		if(n!=1) break;
-		printf("%.2X ", buff[0]);
-		fflush(stdout);
+		if(read(fd,buff,1)!=1)	break;
+
+		//printf("%.2X ", buff[0]);
+		//fflush(stdout);
+
+		serial_buff_p->index += 1;
+		serial_buff_p->index %= ENVLEN;
+		serial_buff_p->buff[serial_buff_p->index] = buff[0];
+		serial_buff_p->buff[serial_buff_p->index+ENVLEN] = buff[0];
+		serial_proc(&(serial_buff_p->buff[serial_buff_p->index+1]));
 	}
 
 	close(fd);

@@ -32,11 +32,14 @@ struct env_buff_t{
 	unsigned short sum;
 };
 
-//extern struct env_t* ENV;
+#define ENVLEN	sizeof(struct env_buff_t)
 
-struct cmd_buff_t{
-	unsigned short head;
-	unsigned short len;
+struct serial_buff_t{
+	unsigned int index;
+	unsigned char buff[2*ENVLEN];
+};
+
+struct cmd_t{
 	int bal_angle;
 	int bal_kp;
 	int bal_kd;
@@ -46,16 +49,22 @@ struct cmd_buff_t{
 	int turn_kp;
 	int turn_ki;
 	int turn_cmd;
+};
+
+struct cmd_buff_t{
+	unsigned short head;
+	unsigned short len;
+	struct cmd_t cmd;
 	unsigned short alen;
 	unsigned short sum;
 };
 
 #define CMDLEN	sizeof(struct cmd_buff_t)
+
 struct usart_buff_t{
-	unsigned int 	index;
+	unsigned int  index;
 	unsigned char buff[2*CMDLEN];
 };
-
 
 #endif
 
