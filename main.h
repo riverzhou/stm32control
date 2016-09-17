@@ -34,6 +34,8 @@ struct env_buff_t{
 
 #define ENVLEN	sizeof(struct env_buff_t)
 
+extern struct env_t* ENV;
+
 struct serial_buff_t{
 	unsigned int index;
 	unsigned char buff[2*ENVLEN];
