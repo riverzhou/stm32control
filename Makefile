@@ -1,7 +1,7 @@
 
 CC:=gcc
 
-CFLAG:= -O2
+CFLAG:= -O2 -Wall
 
 FILENAME:= control.elf
 
