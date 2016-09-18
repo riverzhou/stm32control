@@ -28,24 +28,26 @@ int open_port(void)
 		return -1;
 	}
 
-	int flags = 0;
-	flags = fcntl(fd,F_GETFL,0);
-	flags &= ~O_NONBLOCK;//设置成阻塞模式
-	fcntl(fd,F_SETFL,flags);
+	//int flags = 0;
+	//flags = fcntl(fd,F_GETFL,0);
+	//flags &= ~O_NONBLOCK;//设置成阻塞模式
+	//fcntl(fd,F_SETFL,flags);
 
 	struct termios options;  
-	tcgetattr(fd, &options); 
+	memset(&options,0,sizeof(options));
 
-	options.c_oflag = 0; 
-	options.c_iflag = 0; 
-	options.c_cflag = 0;
-	options.c_lflag = 0;
+	//options.c_oflag = 0; 
+	//options.c_iflag = 0; 
+	//options.c_cflag = 0;
+	//options.c_lflag = 0;
 
-	options.c_iflag |= IGNPAR;//无奇偶检验位  
-
+	// 8N1
 	options.c_cflag |= CLOCAL|CREAD;//设置控制模式状态，本地连接，接收使能  
+	options.c_cflag &= ~PARENB;
+	options.c_cflag &= ~CSTOPB;
 	options.c_cflag &= ~CSIZE;//字符长度，设置数据位之前一定要屏掉这个位  
 	options.c_cflag |= CS8;//8位数据长度  	
+	options.c_cc[VMIN] = 1;//阻塞条件下有效，至少读出1字节
 
 	cfsetspeed(&options, B9600);//设置波特率  
 
@@ -119,7 +121,7 @@ struct cmd_t{
 
 void set_cmd(void)
 {
-	cmd_buff_p->cmd.bal_angle = 1;
+	cmd_buff_p->cmd.bal_angle = 2;
 	cmd_buff_p->cmd.bal_kp	  = 301;
 	cmd_buff_p->cmd.bal_kd	  = 1001;
 	cmd_buff_p->cmd.vel_kp	  = 81;
@@ -155,6 +157,7 @@ int write_cmd(int fd)
 	ret = write(fd,buff,CMDLEN);
 
 	if(ret == CMDLEN){
+		printf("write_cmd %d bytes send. \r\n", ret);
 		return 0;
 	}
 	else{
@@ -178,8 +181,16 @@ int main(void)
 	if(write_cmd(fd))
 		return -1;
 
+	sleep(1);
+
+	if(write_cmd(fd))
+		return -1;
+
 	while(1) {
-		if(read(fd,buff,1)!=1)	break;
+		if(read(fd,buff,1)!=1){
+			perror("serial read");
+			break;
+		}
 
 		//printf("%.2X ", buff[0]);
 		//fflush(stdout);
@@ -195,5 +206,4 @@ int main(void)
 
 	return 0;
 }
-
 
