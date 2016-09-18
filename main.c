@@ -150,7 +150,7 @@ void make_cmd(void)
 int write_cmd(int fd)
 {
 	unsigned char* buff = (unsigned char *)cmd_buff_p;
-	unsigned char warmup[4] = {0};
+	unsigned char warmup[4] = {0,1,2,3};
 	int ret = 0;
 
 	make_cmd();
