@@ -67,7 +67,7 @@ int serial_proc(unsigned char * buff)
 {
 	struct env_buff_t *env_p = (struct env_buff_t *)buff;
 
-	if(env_p->head != 0xff || env_p->len != ENVLEN || (env_p->alen & env_p->len))
+	if(env_p->head != 0xff || env_p->len != ENVLEN || (env_p->len & env_p->alen))
 		return -1;
 
 	unsigned short sum = 0;
