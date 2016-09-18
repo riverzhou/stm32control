@@ -150,9 +150,17 @@ void make_cmd(void)
 int write_cmd(int fd)
 {
 	unsigned char* buff = (unsigned char *)cmd_buff_p;
+	unsigned char warmup[4] = {0};
 	int ret = 0;
 
 	make_cmd();
+
+	ret = write(fd,warmup,4);
+
+	if(ret !=4){
+		perror("write cmd to serial");
+		return -1;
+	}
 
 	ret = write(fd,buff,CMDLEN);
 
