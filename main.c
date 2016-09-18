@@ -67,7 +67,7 @@ int serial_proc(unsigned char * buff)
 {
 	struct env_buff_t *env_p = (struct env_buff_t *)buff;
 
-	if(env_p->head != 0xff || env_p->len != ENVLEN || (env_p->alen & env_p->len))
+	if(env_p->head != 0xff || env_p->len != ENVLEN || (env_p->len & env_p->alen))
 		return -1;
 
 	unsigned short sum = 0;
@@ -150,9 +150,17 @@ void make_cmd(void)
 int write_cmd(int fd)
 {
 	unsigned char* buff = (unsigned char *)cmd_buff_p;
+	unsigned char warmup[4] = {0,1,2,3};
 	int ret = 0;
 
 	make_cmd();
+
+	ret = write(fd,warmup,4);
+
+	if(ret !=4){
+		perror("write cmd to serial");
+		return -1;
+	}
 
 	ret = write(fd,buff,CMDLEN);
 
