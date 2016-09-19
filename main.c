@@ -121,12 +121,12 @@ struct cmd_t{
 
 void set_cmd(void)
 {
-	cmd_buff_p->cmd.bal_angle = 2;
-	cmd_buff_p->cmd.bal_kp	  = 301;
-	cmd_buff_p->cmd.bal_kd	  = 1001;
-	cmd_buff_p->cmd.vel_kp	  = 81;
-	cmd_buff_p->cmd.vel_ki	  = 401;
-	cmd_buff_p->cmd.enc_filte = 801;
+	cmd_buff_p->cmd.bal_angle = 0;
+	cmd_buff_p->cmd.bal_kp	  = 500;
+	cmd_buff_p->cmd.bal_kd	  = 1500;
+	cmd_buff_p->cmd.vel_kp	  = 80;
+	cmd_buff_p->cmd.vel_ki	  = 400;
+	cmd_buff_p->cmd.enc_filte = 900;
 	cmd_buff_p->cmd.turn_kp	  = 0;
 	cmd_buff_p->cmd.turn_ki	  = 0;
 	cmd_buff_p->cmd.turn_cmd  = 0;
